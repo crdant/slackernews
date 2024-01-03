@@ -80,9 +80,6 @@ export default function Page({ initialIntegrations, isReplicatedEnabled }) {
               }}
               checked={integration.is_enabled}
             />
-            <label htmlFor={`integration-${integration.id}-enabled`}>
-              Enabled
-            </label>
             <p>{integration.version}</p>
           </div>
         </div>
