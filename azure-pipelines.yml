@@ -156,8 +156,8 @@ stages:
 - stage: Release
   displayName: Release
   jobs:
-  - job: release
-    displayName: Release to Replicated
+  - job: prepare
+    displayName: Prepare for release
     steps:
     - task: Bash@3
       displayName: Install Replicated CLI
