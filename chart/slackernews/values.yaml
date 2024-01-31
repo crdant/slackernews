@@ -53,8 +53,8 @@ images:
     replicated:
       name: proxypullsecret
   nginx:
-    repository: ttl.sh/slackernews/slackernews-nginx:2h
+    repository: ttl.sh/crdant/slackernews/slackernews-nginx:2h
     pullPolicy: IfNotPresent
   slackernews:
-    repository: ttl.sh/slackernews/slackernews-web:2h
+    repository: ttl.sh/crdant/slackernews/slackernews-web:2h
     pullPolicy: IfNotPresent

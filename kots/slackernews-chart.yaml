@@ -38,7 +38,7 @@ spec:
           dockerconfigjson: ""
       slackernews:
         pullSecret: repl{{ ImagePullSecretName }}
-        repository: '{{repl HasLocalRegistry | ternary LocalRegistryHost "$REGISTRY" }}/{{repl HasLocalRegistry | ternary LocalRegistryNamespace (print "proxy/" (LicenseFieldValue "appSlug") "/ttl.sh/slackernews" ) }}/slackernews-web:2h'
+        repository: '{{repl HasLocalRegistry | ternary LocalRegistryHost "$REGISTRY" }}/{{repl HasLocalRegistry | ternary LocalRegistryNamespace (print "proxy/" (LicenseFieldValue "appSlug") "/ttl.sh/crdant/slackernews" ) }}/slackernews-web:2h'
  
   optionalValues:
     - when: '{{repl ConfigOptionEquals "deploy_postgres" "1"}}'
