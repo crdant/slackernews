@@ -62,8 +62,8 @@ stages:
             helm dep up --debug && \
             cd .. && \
             helm package \
-              --app-version=${{ steps.get_version.outputs.version-without-v }} \
-              --version=${{ steps.get_version.outputs.version-without-v }} \
+              --app-version=1.0.0 \
+              --version=1.0.0 \
               ./slackernews
     - task: CopyFiles@2
       inputs:
