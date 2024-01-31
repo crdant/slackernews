@@ -29,15 +29,19 @@ stages:
         dockerfile: '$(Build.SourcesDirectory)/deploy/Dockerfile.web'
         buildContext: '$(Build.SourcesDirectory)'
         tags: '2h'
+        addPipelineData: false
+        addBaseImageData: false
     - task: Docker@2
       displayName: Build Web image
       inputs:
-        command: buildAndPush    
         containerRegistry: 'ttl.sh'
         repository: 'slackernews-nginx'
-        dockerfile: '$(Build.SourcesDirectory)/deploy/Dockerfile.nginx'
+        command: 'buildAndPush'
+        Dockerfile: '**/Dockerfile'
         buildContext: '$(Build.SourcesDirectory)'
         tags: '2h'
+        addPipelineData: false
+        addBaseImageData: false
 
 - stage: Release
   displayName: Release
