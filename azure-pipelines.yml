@@ -27,6 +27,7 @@ stages:
         containerRegistry: 'ttl.sh'
         repository: 'slackernews-web'
         dockerfile: '$(Build.SourcesDirectory)/deploy/Dockerfile.web'
+        buildContext: .
         tags: '2h'
     - task: Docker@2
       displayName: Build Web image
@@ -34,7 +35,8 @@ stages:
         command: buildAndPush    
         containerRegistry: 'ttl.sh'
         repository: 'slackernews-nginx'
-        dockerfile: '$(Build.SourcesDirectory)/deploy/Dockerfile.web'
+        dockerfile: '$(Build.SourcesDirectory)/deploy/Dockerfile.nginx'
+        buildContext: .
         tags: '2h'
 
 - stage: Release
