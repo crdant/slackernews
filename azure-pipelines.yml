@@ -40,7 +40,7 @@ stages:
   displayName: Package
   jobs:
   - job: build
-    displayName: Build images
+    displayName: Package Helm chart
     pool:
       vmImage: ubuntu-latest
     steps:
