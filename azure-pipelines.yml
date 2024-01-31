@@ -149,6 +149,29 @@ stages:
         targetType: 'inline'
         script: |
           echo "Do your testing here"
+
+- stage: Release
+  displayName: Release
+  jobs:
+  - job: release
+    displayName: Release to Replicated
+    steps:
+    - task: Bash@3
+      displayName: Install Replicated CLI
+      inputs:
+        targetType: 'inline'
+        script: |
+          curl -sSL https://raw.githubusercontent.com/replicatedhq/replicated/master/install.sh | \
+            bash
+    - download: download
+      displayName: Download Chart Artifacts
+      artifact: packages
+    - task: CopyFiles@2
+      displayName: Stage Helm chart artifact
+      inputs:
+        SourceFolder: 'packages'
+        Contents: 'slackernews*.tgz'
+        TargetFolder: '$(Build.SourcesDirectory)/kots'     
   - job: release
     displayName: Release Application
     steps:
