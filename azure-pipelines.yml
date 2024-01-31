@@ -112,13 +112,7 @@ stages:
         k3s_1_28:
           distribution: k3s
           version: 1.28
-    steps:
-    - task: CopyFiles@2
-      displayName: Stage Helm chart artifact
-      inputs:
-        SourceFolder: 'packages'
-        Contents: 'slackernews*.tgz'
-        TargetFolder: '$(Build.SourcesDirectory)/kots'     
+    steps: 
     - task: Bash@3
       displayName: Prepare Cluster
       inputs:
