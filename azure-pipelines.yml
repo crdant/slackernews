@@ -118,7 +118,10 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          replicated cluster prepare --name ${DISTRIBUTION}-${VERSION}-${BUILD} --distribution ${DISTRIBUTION} --version ${VERSION} --yaml-dir ${SOURCE_DIRECTORY}/kots
+          /usr/local/bin/replicated cluster prepare --name ${DISTRIBUTION}-${VERSION}-${BUILD} \
+            --distribution ${DISTRIBUTION} --version ${VERSION} \
+            --yaml-dir ${SOURCE_DIRECTORY}/kots --config-values ${SOURCE_DIRECTORY}/test/config.yaml \
+            --namespace slackernews --shared-password smalltalk
       env:
         REPLICATED_API_TOKEN: $(ApiToken)
         REPLICATED_APP: $(AppSlug)
@@ -146,7 +149,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          replicated cluster kubeconfig --name ${DISTRIBUTION}-${VERSION}-${BUILD} > ./kubeconfig
+          /usr/local/bin/replicated cluster kubeconfig --name ${DISTRIBUTION}-${VERSION}-${BUILD} > ./kubeconfig
       env:
         REPLICATED_API_TOKEN: $(ApiToken)
         REPLICATED_APP: $(AppSlug)
@@ -192,7 +195,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          replicated release create --yaml-dir ${SOURCE_DIRECTORY}/kots
+          /usr/local/bin/replicated release create --yaml-dir ${SOURCE_DIRECTORY}/kots
       env:
         REPLICATED_API_TOKEN: $(ApiToken)
         REPLICATED_APP: $(AppSlug)
