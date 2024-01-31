@@ -13,10 +13,10 @@ variables:
 
 stages:
 - stage: Build
-  displayName: Build images
+  displayName: Build
   jobs:
   - job: build
-    displayName: Build
+    displayName: Build images
     pool:
       vmImage: ubuntu-latest
     steps:
@@ -36,3 +36,37 @@ stages:
         repository: 'slackernews-nginx'
         dockerfile: '$(Build.SourcesDirectory)/deploy/Dockerfile.web'
         tags: '2h'
+
+- stage: Release
+  displayName: Release
+  jobs:
+  - job: build
+    displayName: Build images
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: 'make chart'
+    - task: HelmInstaller@0
+      inputs:
+        helmVersion: '2.14.1'
+        installKubectl: false
+    
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: |
+          cd chart/slackernews && \
+            helm dep up --debug && \
+            cd .. && \
+            helm package \
+              --app-version=${{ steps.get_version.outputs.version-without-v }} \
+              --version=${{ steps.get_version.outputs.version-without-v }} \
+              ./slackernews
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: 'charts'
+        Contents: 'slackernews*.tgz'
+        TargetFolder: 'kots'
