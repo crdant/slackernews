@@ -66,10 +66,12 @@ stages:
       inputs:
         SourceFolder: 'chart'
         Contents: 'slackernews*.tgz'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)/packages'
-    - publish: '$(Build.ArtifactStagingDirectory)/packages'
-      displayName: 'Publish Helm chart artifact'
-      artifact: packages
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'package'
+    publishLocation: 'Container'
 
 - stage: SmokeTest
   displayName: Smoke Test
@@ -84,9 +86,18 @@ stages:
         script: |
           curl -sSL https://raw.githubusercontent.com/replicatedhq/replicated/master/install.sh | \
             bash
-    - download: download
-      displayName: Download Chart Artifacts
-      artifact: packages
+    - task: DownloadBuildArtifacts@1
+      inputs:
+        buildType: current
+        artifactName: package
+        downloadPath: '$(System.ArtifactsDirectory)'
+    - task: CopyFiles@2
+      displayName: Stage Helm chart artifact
+      inputs:
+        SourceFolder: '$(System.ArtifactsDirectory)'
+        Contents: 'slackernews*.tgz'
+        TargetFolder: '$(Build.SourcesDirectory)/kots'  
+  
   - job: clusters
     displayName: Prepare Test Clusters
     dependsOn: prepare 
@@ -168,15 +179,17 @@ stages:
         script: |
           curl -sSL https://raw.githubusercontent.com/replicatedhq/replicated/master/install.sh | \
             bash
-    - download: download
-      displayName: Download Chart Artifacts
-      artifact: packages
+    - task: DownloadBuildArtifacts@1
+      inputs:
+        buildType: current
+        artifactName: package
+        downloadPath: '$(System.ArtifactsDirectory)'
     - task: CopyFiles@2
       displayName: Stage Helm chart artifact
       inputs:
-        SourceFolder: 'packages'
+        SourceFolder: '$(System.ArtifactsDirectory)'
         Contents: 'slackernews*.tgz'
-        TargetFolder: '$(Build.SourcesDirectory)/kots'     
+        TargetFolder: '$(Build.SourcesDirectory)/kots'  
   - job: release
     displayName: Release Application
     steps:
