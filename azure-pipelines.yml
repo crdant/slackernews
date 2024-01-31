@@ -35,7 +35,7 @@ stages:
         containerRegistry: 'ttl.sh'
         repository: 'crdant/slackernews/slackernews-nginx'
         command: 'buildAndPush'
-        Dockerfile: '**/Dockerfile'
+        dockerfile: '$(Build.SourcesDirectory)/deploy/Dockerfile.nginx'
         buildContext: '$(Build.SourcesDirectory)'
         tags: '2h'
 
