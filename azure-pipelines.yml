@@ -75,7 +75,7 @@ stages:
   displayName: Smoke Test
   jobs:
   - job: prepare
-    release: Prepare runner
+    displayName: Prepare runner
     steps:
     - task: Bash@3
       displayName: Install Replicated CLI
