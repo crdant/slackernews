@@ -8,9 +8,6 @@ trigger:
 resources:
 - repo: self
 
-variables:
-  tag: '$(Build.BuildId)'
-
 stages:
 - stage: Build
   displayName: Build
@@ -39,8 +36,8 @@ stages:
         buildContext: '$(Build.SourcesDirectory)'
         tags: '2h'
 
-- stage: Release
-  displayName: Release
+- stage: Package
+  displayName: Package
   jobs:
   - job: build
     displayName: Build images
@@ -65,23 +62,102 @@ stages:
               --version=1.0.0 \
               ./slackernews
     - task: CopyFiles@2
+      displayName: Stage Helm chart artifact
       inputs:
         SourceFolder: 'charts'
         Contents: 'slackernews*.tgz'
-        TargetFolder: 'kots'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/packages'
+    - publish: '$(Build.ArtifactStagingDirectory)/packages'
+      displayName: 'Publish Helm chart artifact'
+      artifact: packages
+
+- stage: SmokeTest
+  displayName: Smoke Test
+  jobs:
+  - job: prepare
+    displayName: Prepare Test Clusters
+    strategy:
+      matrix:
+        k3s_1_26:
+          distribution: k3s
+          version: 1.26
+        k3s_1_27:
+          distribution: k3s
+          version: 1.27
+        k3s_1_28:
+          distribution: k3s
+          version: 1.28
+    steps:
     - task: Bash@3
       displayName: Install Replicated CLI
       inputs:
         targetType: 'inline'
         script: |
           curl -sSL https://raw.githubusercontent.com/replicatedhq/replicated/master/install.sh | \
-            bash          
+            bash
+    - download: download
+      displayName: Download Chart Artifacts
+      artifact: packages
+    - task: CopyFiles@2
+      displayName: Stage Helm chart artifact
+      inputs:
+        SourceFolder: 'packages'
+        Contents: 'slackernews*.tgz'
+        TargetFolder: '$(Build.SourcesDirectory)/kots'     
     - task: Bash@3
-      displayName: Create Release
+      displayName: Prepare Cluster
       inputs:
         targetType: 'inline'
         script: |
-          replicated release create --yaml-dir ./kots
+          replicated cluster prepare --name ${DISTRIBUTION}-${VERSION}-${BUILD} --distribution ${DISTRIBUTION} --version ${VERSION} --yaml-dir ${SOURCE_DIRECTORY}/kots
+      env:
+        REPLICATED_API_TOKEN: $(ApiToken)
+        REPLICATED_APP: $(AppSlug)
+        DISTRIBUTION: $(distribution)
+        VERSION: $(version)
+        SOURCE_DIRECTORY: $(Build.SourcesDirectory)
+        BUILD: $(Build.BuildId)
+  - job: test
+    displayName: Run tests
+    strategy:
+      matrix:
+        k3s_1_26:
+          distribution: k3s
+          version: 1.26
+        k3s_1_27:
+          distribution: k3s
+          version: 1.27
+        k3s_1_28:
+          distribution: k3s
+          version: 1.28
+    steps:
+    - task: Bash@3
+      displayName: Get Cluster Configuration
+      inputs:
+        targetType: 'inline'
+        script: |
+          replicated cluster kubeconfig --name ${DISTRIBUTION}-${VERSION}-${BUILD} > ./kubeconfig
+      env:
+        REPLICATED_API_TOKEN: $(ApiToken)
+        REPLICATED_APP: $(AppSlug)
+        DISTRIBUTION: $(distribution)
+        VERSION: $(version)
+        BUILD: $(Build.BuildId)
+    - task: Bash@3
+      displayName: Test
+      inputs:
+        targetType: 'inline'
+        script: |
+          echo "Do your testing here"
+  - job: release
+    displayName: Release Application
+    steps:
+    - task: Bash@3
+      displayName: Prepare Cluster
+      inputs:
+        targetType: 'inline'
+        script: |
+          replicated release create --yaml-dir ${SOURCE_DIRECTORY}/kots
       env:
         REPLICATED_API_TOKEN: $(ApiToken)
         REPLICATED_APP: $(AppSlug)
