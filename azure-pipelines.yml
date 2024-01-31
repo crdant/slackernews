@@ -27,10 +27,8 @@ stages:
         containerRegistry: 'ttl.sh'
         repository: 'slackernews-web'
         dockerfile: '$(Build.SourcesDirectory)/deploy/Dockerfile.web'
-        buildContext: '$(Build.SourcesDirectory)'
+        buildContext: '$(Build.SourcesDirectory)/slackernews'
         tags: '2h'
-        addPipelineData: false
-        addBaseImageData: false
     - task: Docker@2
       displayName: Build Web image
       inputs:
@@ -40,8 +38,6 @@ stages:
         Dockerfile: '**/Dockerfile'
         buildContext: '$(Build.SourcesDirectory)'
         tags: '2h'
-        addPipelineData: false
-        addBaseImageData: false
 
 - stage: Release
   displayName: Release
