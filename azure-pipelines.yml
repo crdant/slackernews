@@ -45,16 +45,13 @@ stages:
     pool:
       vmImage: ubuntu-latest
     steps:
-    - task: Bash@3
-      inputs:
-        targetType: 'inline'
-        script: 'make chart'
     - task: HelmInstaller@0
+      displayName: Install Helm CLI
       inputs:
         helmVersion: '2.14.1'
-        installKubectl: false
-    
+        installKubectl: false 
     - task: Bash@3
+      displayName: Package Helm chart
       inputs:
         targetType: 'inline'
         script: |
@@ -70,3 +67,16 @@ stages:
         SourceFolder: 'charts'
         Contents: 'slackernews*.tgz'
         TargetFolder: 'kots'
+    - task: Bash@3
+      displayName: Install Replicated CLI
+      inputs:
+        targetType: 'inline'
+        script: |
+          curl -sSL https://raw.githubusercontent.com/replicatedhq/replicated/master/install.sh | \
+            bash          
+    - task: Bash@3
+      displayName: Create Release
+      inputs:
+        targetType: 'inline'
+        script: |
+          replicated release create --yaml-dir ./kots
