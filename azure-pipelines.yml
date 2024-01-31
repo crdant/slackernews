@@ -75,6 +75,19 @@ stages:
   displayName: Smoke Test
   jobs:
   - job: prepare
+    release: Prepare runner
+    steps:
+    - task: Bash@3
+      displayName: Install Replicated CLI
+      inputs:
+        targetType: 'inline'
+        script: |
+          curl -sSL https://raw.githubusercontent.com/replicatedhq/replicated/master/install.sh | \
+            bash
+    - download: download
+      displayName: Download Chart Artifacts
+      artifact: packages
+  - job: clusters
     displayName: Prepare Test Clusters
     strategy:
       matrix:
@@ -88,16 +101,6 @@ stages:
           distribution: k3s
           version: 1.28
     steps:
-    - task: Bash@3
-      displayName: Install Replicated CLI
-      inputs:
-        targetType: 'inline'
-        script: |
-          curl -sSL https://raw.githubusercontent.com/replicatedhq/replicated/master/install.sh | \
-            bash
-    - download: download
-      displayName: Download Chart Artifacts
-      artifact: packages
     - task: CopyFiles@2
       displayName: Stage Helm chart artifact
       inputs:
