@@ -176,7 +176,7 @@ stages:
     displayName: Release Application
     steps:
     - task: Bash@3
-      displayName: Prepare Cluster
+      displayName: Create release
       inputs:
         targetType: 'inline'
         script: |
