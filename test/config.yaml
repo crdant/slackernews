@@ -1,0 +1,31 @@
+apiVersion: kots.io/v1beta1
+kind: ConfigValues
+metadata:
+  creationTimestamp: null
+  name: slackernews
+spec:
+  values:
+    access_option:
+      default: node_port
+      value: load_balancer
+    certificate_source:
+      default: generate_internal
+    deploy_postgres:
+      default: "1"
+    postgres_external_uri: {}
+    postgres_password:
+      value: mGcOF50iF5Sg3dFvaOD7fnJ2lKnvZMo4kibcT/yOuV/fNZTG0UtWhwYXkWq6ljLbRNcXFebeO4s=
+    slack_bot_token:
+      value: 
+    slack_clientid:
+      value: 
+    slack_clientsecret:
+      value:
+    slack_user_token:
+      value:
+    slackernews_domain:
+      value: news.example.com
+    tls_ca: {}
+    tls_cert: {}
+    tls_key: {}
+status: {}
