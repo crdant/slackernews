@@ -89,6 +89,7 @@ stages:
       artifact: packages
   - job: clusters
     displayName: Prepare Test Clusters
+    dependsOn: prepare 
     strategy:
       matrix:
         k3s_1_26:
@@ -122,6 +123,7 @@ stages:
         BUILD: $(Build.BuildId)
   - job: test
     displayName: Run tests
+    dependsOn: clusters
     strategy:
       matrix:
         k3s_1_26:
