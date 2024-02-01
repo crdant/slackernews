@@ -115,7 +115,8 @@ stages:
         script: |
           replicated cluster prepare --name ${DISTRIBUTION}-${VERSION}-${BUILD} \
             --distribution ${DISTRIBUTION} --version ${VERSION} \
-            --yaml-dir ${SOURCE_DIRECTORY}/kots --config-values ${SOURCE_DIRECTORY}/test/config.yaml \
+            --yaml-dir ${SOURCE_DIRECTORY}/kots \
+            --config-values-file ${SOURCE_DIRECTORY}/test/config.yaml \
             --namespace slackernews --shared-password smalltalk
       env:
         REPLICATED_API_TOKEN: $(ApiToken)
