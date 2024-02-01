@@ -187,3 +187,4 @@ stages:
       env:
         REPLICATED_API_TOKEN: $(ApiToken)
         REPLICATED_APP: $(AppSlug)
+        SOURCE_DIRECTORY: $(Build.SourcesDirectory)
