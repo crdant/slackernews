@@ -143,6 +143,13 @@ stages:
         targetType: 'inline'
         script: |
           echo "Do your testing here"
+    - task: Bash@3
+      displayName: Test
+      inputs:
+        targetType: 'inline'
+        script: |
+          replicated cluster rm --name ${DISTRIBUTION}-${VERSION}-${BUILD}
+    
 
 - stage: Release
   displayName: Release
