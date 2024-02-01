@@ -128,9 +128,9 @@ stages:
         REPLICATED_APP: $(AppSlug)
         DISTRIBUTION: $(distribution)
         VERSION: $(version)
+        BUILD: $(Build.BuildId)
         SOURCE_DIRECTORY: $(Build.SourcesDirectory)
         ARTIFACTS_DIRECTORY: $(System.ArtifactsDirectory)
-        BUILD: $(Build.BuildId)
     - task: Bash@3
       displayName: Get Cluster Configuration
       inputs:
@@ -150,11 +150,16 @@ stages:
         script: |
           echo "Do your testing here"
     - task: Bash@3
-      displayName: Test
+      displayName: Delete Test Cluster
       inputs:
         targetType: 'inline'
         script: |
           replicated cluster rm --name ${DISTRIBUTION}-${VERSION}-${BUILD}
+        REPLICATED_API_TOKEN: $(ApiToken)
+        REPLICATED_APP: $(AppSlug)
+        DISTRIBUTION: $(distribution)
+        VERSION: $(version)
+        BUILD: $(Build.BuildId)
     
 
 - stage: Release
