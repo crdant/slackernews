@@ -155,6 +155,7 @@ stages:
         targetType: 'inline'
         script: |
           replicated cluster rm --name ${DISTRIBUTION}-${VERSION}-${BUILD}
+      env:
         REPLICATED_API_TOKEN: $(ApiToken)
         REPLICATED_APP: $(AppSlug)
         DISTRIBUTION: $(distribution)
