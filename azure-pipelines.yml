@@ -157,8 +157,8 @@ stages:
 - stage: Release
   displayName: Release
   jobs:
-  - job: prepare
-    displayName: Prepare for release
+  - job: release
+    displayName: Release Application
     steps:
     - task: Bash@3
       displayName: Install Replicated CLI
@@ -178,9 +178,6 @@ stages:
         SourceFolder: '$(System.ArtifactsDirectory)'
         Contents: 'slackernews*.tgz'
         TargetFolder: '$(Build.SourcesDirectory)/kots'  
-  - job: release
-    displayName: Release Application
-    steps:
     - task: Bash@3
       displayName: Create release
       inputs:
