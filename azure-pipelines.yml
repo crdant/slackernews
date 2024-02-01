@@ -86,6 +86,12 @@ stages:
         script: |
           curl -sSL https://raw.githubusercontent.com/replicatedhq/replicated/master/install.sh | \
             bash
+    - task: Bash@3
+      displayName: Validate Replicated CLI
+      inputs:
+        targetType: 'inline'
+        script: |
+          replicated version
     - task: DownloadBuildArtifacts@1
       inputs:
         buildType: current
