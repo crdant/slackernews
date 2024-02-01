@@ -8,6 +8,9 @@ trigger:
 resources:
 - repo: self
 
+variables:
+- group: replicated
+
 stages:
 - stage: Build
   displayName: Build
@@ -113,7 +116,6 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          echo $REPLICATED_API_TOKEN $REPLICATED_APP
           replicated cluster prepare --name ${DISTRIBUTION}-${VERSION}-${BUILD} \
             --distribution ${DISTRIBUTION} --version ${VERSION} \
             --yaml-dir ${SOURCE_DIRECTORY}/kots \
