@@ -113,7 +113,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          export REPLICATED_API_TOKEN REPLICATED_APP
+          echo $REPLICATED_API_TOKEN $REPLICATED_APP
           replicated cluster prepare --name ${DISTRIBUTION}-${VERSION}-${BUILD} \
             --distribution ${DISTRIBUTION} --version ${VERSION} \
             --yaml-dir ${SOURCE_DIRECTORY}/kots \
