@@ -76,36 +76,8 @@ stages:
 - stage: SmokeTest
   displayName: Smoke Test
   jobs:
-  - job: prepare
-    displayName: Prepare runner
-    steps:
-    - task: Bash@3
-      displayName: Install Replicated CLI
-      inputs:
-        targetType: 'inline'
-        script: |
-          curl -sSL https://raw.githubusercontent.com/replicatedhq/replicated/master/install.sh | \
-            bash
-    - task: Bash@3
-      displayName: Validate Replicated CLI
-      inputs:
-        targetType: 'inline'
-        script: |
-          replicated version
-    - task: DownloadBuildArtifacts@1
-      inputs:
-        buildType: current
-        artifactName: package
-        downloadPath: '$(System.ArtifactsDirectory)'
-    - task: CopyFiles@2
-      displayName: Stage Helm chart artifact
-      inputs:
-        SourceFolder: '$(System.ArtifactsDirectory)'
-        Contents: 'slackernews*.tgz'
-        TargetFolder: '$(Build.SourcesDirectory)/kots'  
-  
-  - job: clusters
-    displayName: Prepare Test Clusters
+  - job: test
+    displayName: Run Smoke Tests
     dependsOn: prepare 
     strategy:
       matrix:
@@ -120,11 +92,29 @@ stages:
           version: 1.28
     steps: 
     - task: Bash@3
+      displayName: Install Replicated CLI
+      inputs:
+        targetType: 'inline'
+        script: |
+          curl -sSL https://raw.githubusercontent.com/replicatedhq/replicated/master/install.sh | \
+            bash
+    - task: DownloadBuildArtifacts@1
+      inputs:
+        buildType: current
+        artifactName: package
+        downloadPath: '$(System.ArtifactsDirectory)'
+    - task: CopyFiles@2
+      displayName: Stage Helm chart artifact
+      inputs:
+        SourceFolder: '$(System.ArtifactsDirectory)'
+        Contents: 'slackernews*.tgz'
+        TargetFolder: '$(Build.SourcesDirectory)/kots'  
+    - task: Bash@3
       displayName: Prepare Cluster
       inputs:
         targetType: 'inline'
         script: |
-          /usr/local/bin/replicated cluster prepare --name ${DISTRIBUTION}-${VERSION}-${BUILD} \
+          replicated cluster prepare --name ${DISTRIBUTION}-${VERSION}-${BUILD} \
             --distribution ${DISTRIBUTION} --version ${VERSION} \
             --yaml-dir ${SOURCE_DIRECTORY}/kots --config-values ${SOURCE_DIRECTORY}/test/config.yaml \
             --namespace slackernews --shared-password smalltalk
@@ -135,27 +125,12 @@ stages:
         VERSION: $(version)
         SOURCE_DIRECTORY: $(Build.SourcesDirectory)
         BUILD: $(Build.BuildId)
-  - job: test
-    displayName: Run tests
-    dependsOn: clusters
-    strategy:
-      matrix:
-        k3s_1_26:
-          distribution: k3s
-          version: 1.26
-        k3s_1_27:
-          distribution: k3s
-          version: 1.27
-        k3s_1_28:
-          distribution: k3s
-          version: 1.28
-    steps:
     - task: Bash@3
       displayName: Get Cluster Configuration
       inputs:
         targetType: 'inline'
         script: |
-          /usr/local/bin/replicated cluster kubeconfig --name ${DISTRIBUTION}-${VERSION}-${BUILD} > ./kubeconfig
+          replicated cluster kubeconfig --name ${DISTRIBUTION}-${VERSION}-${BUILD} > ./kubeconfig
       env:
         REPLICATED_API_TOKEN: $(ApiToken)
         REPLICATED_APP: $(AppSlug)
@@ -201,7 +176,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          /usr/local/bin/replicated release create --yaml-dir ${SOURCE_DIRECTORY}/kots
+          replicated release create --yaml-dir ${SOURCE_DIRECTORY}/kots
       env:
         REPLICATED_API_TOKEN: $(ApiToken)
         REPLICATED_APP: $(AppSlug)
