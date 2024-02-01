@@ -116,6 +116,8 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
+          find ${ARTIFACTS_DIRECTORY}
+          ls ${SOURCE_DIRECTORY}/kots
           replicated cluster prepare --name ${DISTRIBUTION}-${VERSION}-${BUILD} \
             --distribution ${DISTRIBUTION} --version ${VERSION} \
             --yaml-dir ${SOURCE_DIRECTORY}/kots \
@@ -127,6 +129,7 @@ stages:
         DISTRIBUTION: $(distribution)
         VERSION: $(version)
         SOURCE_DIRECTORY: $(Build.SourcesDirectory)
+        ARTIFACTS_DIRECTORY: $(System.ArtifactsDirectory)
         BUILD: $(Build.BuildId)
     - task: Bash@3
       displayName: Get Cluster Configuration
