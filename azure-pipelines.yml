@@ -111,47 +111,47 @@ stages:
         SourceFolder: '$(System.ArtifactsDirectory)'
         Contents: 'slackernews*.tgz'
         TargetFolder: '$(Build.SourcesDirectory)/kots'  
-    # - task: Bash@3
-    #   displayName: Prepare Cluster
-    #   inputs:
-    #     targetType: 'inline'
-    #     script: |
-    #       replicated cluster prepare --name ${DISTRIBUTION}-${VERSION}-${BUILD} \
-    #         --distribution ${DISTRIBUTION} --version ${VERSION} \
-    #         --yaml-dir ${SOURCE_DIRECTORY}/kots \
-    #         --config-values-file ${SOURCE_DIRECTORY}/test/config.yaml \
-    #         --namespace slackernews --shared-password smalltalk
-    #   env:
-    #     REPLICATED_API_TOKEN: $(ApiToken)
-    #     REPLICATED_APP: $(AppSlug)
-    #     DISTRIBUTION: $(distribution)
-    #     VERSION: $(version)
-    #     SOURCE_DIRECTORY: $(Build.SourcesDirectory)
-    #     BUILD: $(Build.BuildId)
-    # - task: Bash@3
-    #   displayName: Get Cluster Configuration
-    #   inputs:
-    #     targetType: 'inline'
-    #     script: |
-    #       replicated cluster kubeconfig --name ${DISTRIBUTION}-${VERSION}-${BUILD} > ./kubeconfig
-    #   env:
-    #     REPLICATED_API_TOKEN: $(ApiToken)
-    #     REPLICATED_APP: $(AppSlug)
-    #     DISTRIBUTION: $(distribution)
-    #     VERSION: $(version)
-    #     BUILD: $(Build.BuildId)
-    # - task: Bash@3
-    #   displayName: Test
-    #   inputs:
-    #     targetType: 'inline'
-    #     script: |
-    #       echo "Do your testing here"
-    # - task: Bash@3
-    #   displayName: Test
-    #   inputs:
-    #     targetType: 'inline'
-    #     script: |
-    #       replicated cluster rm --name ${DISTRIBUTION}-${VERSION}-${BUILD}
+    - task: Bash@3
+      displayName: Prepare Cluster
+      inputs:
+        targetType: 'inline'
+        script: |
+          replicated cluster prepare --name ${DISTRIBUTION}-${VERSION}-${BUILD} \
+            --distribution ${DISTRIBUTION} --version ${VERSION} \
+            --yaml-dir ${SOURCE_DIRECTORY}/kots \
+            --config-values-file ${SOURCE_DIRECTORY}/test/config.yaml \
+            --namespace slackernews --shared-password smalltalk
+      env:
+        REPLICATED_API_TOKEN: $(ApiToken)
+        REPLICATED_APP: $(AppSlug)
+        DISTRIBUTION: $(distribution)
+        VERSION: $(version)
+        SOURCE_DIRECTORY: $(Build.SourcesDirectory)
+        BUILD: $(Build.BuildId)
+    - task: Bash@3
+      displayName: Get Cluster Configuration
+      inputs:
+        targetType: 'inline'
+        script: |
+          replicated cluster kubeconfig --name ${DISTRIBUTION}-${VERSION}-${BUILD} > ./kubeconfig
+      env:
+        REPLICATED_API_TOKEN: $(ApiToken)
+        REPLICATED_APP: $(AppSlug)
+        DISTRIBUTION: $(distribution)
+        VERSION: $(version)
+        BUILD: $(Build.BuildId)
+    - task: Bash@3
+      displayName: Test
+      inputs:
+        targetType: 'inline'
+        script: |
+          echo "Do your testing here"
+    - task: Bash@3
+      displayName: Test
+      inputs:
+        targetType: 'inline'
+        script: |
+          replicated cluster rm --name ${DISTRIBUTION}-${VERSION}-${BUILD}
     
 
 - stage: Release
