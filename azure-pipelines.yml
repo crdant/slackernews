@@ -78,7 +78,6 @@ stages:
   jobs:
   - job: test
     displayName: Run Smoke Tests
-    dependsOn: prepare 
     strategy:
       matrix:
         k3s_1_26:
