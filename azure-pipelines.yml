@@ -108,7 +108,7 @@ stages:
     - task: CopyFiles@2
       displayName: Stage Helm chart artifact
       inputs:
-        SourceFolder: '$(System.ArtifactsDirectory)'
+        SourceFolder: '$(System.ArtifactsDirectory)/package'
         Contents: 'slackernews*.tgz'
         TargetFolder: '$(Build.SourcesDirectory)/kots'  
     - task: Bash@3
