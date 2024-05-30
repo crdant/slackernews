@@ -111,4 +111,9 @@ spec:
       password: repl{{ ConfigOption "postgres_password"}}
     admin-console:
       enabled: false
+    images:
+      slackernews:
+        repository: $REGISTRY/ghcr.io/$NAMESPACE/slackernews-web:$VERSION
+      nginx:
+        repository: nginx:1.25.3
 
